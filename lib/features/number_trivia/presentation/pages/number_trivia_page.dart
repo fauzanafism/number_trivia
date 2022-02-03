@@ -15,7 +15,7 @@ class NumberTriviaPage extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: Column(children: <Widget>[
             const SizedBox(height: 10,),
-            const Text('Start searching!'),
+            MessageDisplay(),
             const SizedBox(height: 20,),
             ElevatedButton(onPressed: (){}, child: const Text('Search'))
           ],),
@@ -24,3 +24,4 @@ class NumberTriviaPage extends StatelessWidget {
     );
   }
 }
+
