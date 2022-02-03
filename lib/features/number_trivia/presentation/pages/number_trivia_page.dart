@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:number_trivia/features/number_trivia/presentation/widgets/message_display.dart';
+import 'package:number_trivia/features/number_trivia/presentation/widgets/widgets.dart';
 
 class NumberTriviaPage extends StatelessWidget {
   const NumberTriviaPage({Key? key}) : super(key: key);
@@ -14,11 +14,11 @@ class NumberTriviaPage extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(10),
-          child: Column(children: <Widget>[
-            const SizedBox(height: 10,),
-            const MessageDisplay(message: 'Start searching!',),
-            const SizedBox(height: 20,),
-            ElevatedButton(onPressed: (){}, child: const Text('Search'))
+          child: Column(children: const <Widget>[
+            SizedBox(height: 10,),
+            MessageDisplay(message: 'Start searching!',),
+            SizedBox(height: 20,),
+            TriviaControls(),
           ],),
         ),
       ),
