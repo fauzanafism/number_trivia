@@ -10,7 +10,17 @@ class NumberTriviaPage extends StatelessWidget {
         title: const Text('Number Trivia'),
         backgroundColor: Colors.amber,
       ),
-      body: Center(),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(children: <Widget>[
+            const SizedBox(height: 10,),
+            const Text('Start searching!'),
+            const SizedBox(height: 20,),
+            ElevatedButton(onPressed: (){}, child: const Text('Search'))
+          ],),
+        ),
+      ),
     );
   }
 }
