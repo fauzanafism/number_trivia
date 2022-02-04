@@ -21,7 +21,7 @@ Future<void> main() async {
   const tNumberTrivia = NumberTrivia(text: 'test', number: 1);
 
   test('should get trivia for the number from the repository', () async {
-    when(mockNumberTriviaRepository.getConcreteNumberTrivia(any))
+    when(mockNumberTriviaRepository.getConcreteNumberTrivia(tNumber))
         .thenAnswer((_) async => const Right(tNumberTrivia));
     final result = await usecase.execute(number: tNumber);
 
