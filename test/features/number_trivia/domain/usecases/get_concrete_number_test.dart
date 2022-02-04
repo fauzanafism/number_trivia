@@ -8,19 +8,27 @@ import 'package:number_trivia/features/number_trivia/domain/usecases/get_concret
 class MockNumberTriviaRepository extends Mock
     implements NumberTriviaRepository {}
 
-void main() {
-  GetConcreteNumberTrivia usecase;
-  MockNumberTriviaRepository mockNumberTriviaRepository = MockNumberTriviaRepository();
+Future<void> main() async {
+  late GetConcreteNumberTrivia usecase;
+  late MockNumberTriviaRepository mockNumberTriviaRepository;
 
   setUp(() {
     mockNumberTriviaRepository = MockNumberTriviaRepository();
     usecase = GetConcreteNumberTrivia(mockNumberTriviaRepository);
   });
 
-  final tNumber = 1;
-  final tNumberTrivia = NumberTrivia(text: 'test', number: 1);
+  const tNumber = 1;
+  const tNumberTrivia = NumberTrivia(text: 'test', number: 1);
 
   test('should get trivia for the number from the repository', () async {
-    when(mockNumberTriviaRepository.getConcreteNumberTrivia(any)).thenAnswer((_) async => Right(tNumberTrivia));
+    when(mockNumberTriviaRepository.getConcreteNumberTrivia(any))
+        .thenAnswer((_) async => const Right(tNumberTrivia));
   });
+  final result = await usecase.execute(number: tNumber);
+
+  expect(result, const Right(tNumberTrivia));
+
+  verify(mockNumberTriviaRepository.getConcreteNumberTrivia(tNumber));
+
+  verifyNoMoreInteractions(mockNumberTriviaRepository);
 }
