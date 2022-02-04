@@ -23,12 +23,12 @@ Future<void> main() async {
   test('should get trivia for the number from the repository', () async {
     when(mockNumberTriviaRepository.getConcreteNumberTrivia(any))
         .thenAnswer((_) async => const Right(tNumberTrivia));
+    final result = await usecase.execute(number: tNumber);
+
+    expect(result, equals(const Right(tNumberTrivia)));
+
+    verify(mockNumberTriviaRepository.getConcreteNumberTrivia(tNumber));
+
+    verifyNoMoreInteractions(mockNumberTriviaRepository);
   });
-  final result = await usecase.execute(number: tNumber);
-
-  expect(result, const Right(tNumberTrivia));
-
-  verify(mockNumberTriviaRepository.getConcreteNumberTrivia(tNumber));
-
-  verifyNoMoreInteractions(mockNumberTriviaRepository);
 }
