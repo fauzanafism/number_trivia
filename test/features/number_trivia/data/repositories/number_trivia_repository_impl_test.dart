@@ -71,19 +71,58 @@ void main() {
         // assert
         verify(
             mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
-        verify(
-            mockNumberTriviaLocalDataSource.cacheNumberTrivia(tNumberTriviaModel));
+        verify(mockNumberTriviaLocalDataSource
+            .cacheNumberTrivia(tNumberTriviaModel));
       });
 
-      test('should return server failure when the call to remote data unsuccessful', () async {
+      test(
+          'should return server failure when the call to remote data unsuccessful',
+          () async {
         // arrange
-        when(mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber)).thenThrow(ServerException());
+        when(mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber))
+            .thenThrow(ServerException());
         // act
         final result = await repository.getConcreteNumberTrivia(tNumber);
         // assert
-        verify(mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
+        verify(
+            mockNumberTriviaRemoteDataSource.getConcreteNumberTrivia(tNumber));
         verifyZeroInteractions(mockNumberTriviaLocalDataSource);
         expect(result, equals(Left(ServerFailure())));
+      });
+    });
+
+    group('device is offline', () {
+      setUp(() {
+        when(mockNetworkInfo.isConnected).thenAnswer((_) async => false);
+      });
+
+      test(
+          'should return last locally cached data when the cached data is present',
+          () async {
+        // arrange
+        when(mockNumberTriviaLocalDataSource.getLastNumberTrivia())
+            .thenAnswer((_) async => tNumberTriviaModel);
+        // act
+        final result = await repository.getConcreteNumberTrivia(tNumber);
+        // assert
+        verifyZeroInteractions(mockNumberTriviaRemoteDataSource);
+        verify(mockNumberTriviaLocalDataSource.getLastNumberTrivia());
+        expect(result, equals(const Right(tNumberTrivia)));
+      });
+
+      test(
+          'should return CacheFailure when there is no cached data present',
+          () async {
+        // arrange
+        when(mockNumberTriviaLocalDataSource.getLastNumberTrivia())
+            .thenThrow(CacheException());
+        // act
+        final result = await repository.getConcreteNumberTrivia(tNumber);
+        // assert
+        verifyZeroInteractions(mockNumberTriviaRemoteDataSource);
+        verify(mockNumberTriviaLocalDataSource
+            .getLastNumberTrivia());
+        expect(result, equals(Left(CacheFailure())));
       });
     });
   });
