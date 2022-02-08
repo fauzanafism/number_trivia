@@ -16,16 +16,20 @@ void main() {
   setUp(() {
     mockSharedPreferences = MockSharedPreferences();
     dataSource = NumberTriviaLocalDataSourceImpl(
-      sharedPreferences: mockSharedPreferences,     
+      sharedPreferences: mockSharedPreferences,
     );
   });
 
   group('getLastNumberTrivia', () {
-    final tNumberTriviaModel = NumberTriviaModel.fromJson(json.decode(fixture('trivia_cached.json')));
+    final tNumberTriviaModel =
+        NumberTriviaModel.fromJson(json.decode(fixture('trivia_cached.json')));
 
-    test('should return NumberTrivia from SharedPref when there is one in the cache', () async {
+    test(
+        'should return NumberTrivia from SharedPref when there is one in the cache',
+        () async {
       // arrange
-      when(mockSharedPreferences.getString(any)).thenReturn(fixture('trivia_cached.json'));
+      when(mockSharedPreferences.getString(any))
+          .thenReturn(fixture('trivia_cached.json'));
       // act
       final result = await dataSource.getLastNumberTrivia();
       // assert
@@ -41,7 +45,24 @@ void main() {
       final call = dataSource.getLastNumberTrivia;
       // assert
       // perlu untuk tes jika panggil metod yg throw exception
-      expect(() =>  call(), throwsA(const TypeMatcher<CacheException>()));
+      expect(() => call(), throwsA(const TypeMatcher<CacheException>()));
+    });
+  });
+
+  group('cacheNumberTrivia', () {
+    const tNumberTriviaModel =
+        NumberTriviaModel(text: 'test trivia', number: 1);
+
+    test('should call SharedPref to cache the data', () {
+      // arrange
+      when(mockSharedPreferences.setString(any, any))
+          .thenAnswer((_) => Future.value(true));
+      // act
+      dataSource.cacheNumberTrivia(tNumberTriviaModel);
+      // assert
+      final expectedJsonString = json.encode(tNumberTriviaModel.toJson());
+      verify(mockSharedPreferences.setString(
+          'CACHED_NUMBER_TRIVIA', expectedJsonString));
     });
   });
 }
