@@ -7,11 +7,10 @@ abstract class NumberTriviaEvent extends Equatable {
   List<Object> get props => [];
 }
 
-// ignore: empty_constructor_bodies
 class GetTriviaForConcreteNumber extends NumberTriviaEvent {
   final String numberString;
 
-  GetTriviaForConcreteNumber(this.numberString)
+  const GetTriviaForConcreteNumber(this.numberString);
 
   @override
   List<Object> get props => [numberString]; 
