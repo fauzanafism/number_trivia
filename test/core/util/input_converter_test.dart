@@ -18,6 +18,24 @@ void main() {
       // assert
       expect(result, const Right(123));
     });
+
+    test('should return a failure when the string is not an int', () async {
+      // arrange
+      const str = 'abc';
+      // act
+      final result = inputConverter.stringToUnsignedInt(str);
+      // assert
+      expect(result, Left(InvalidInputFailure()));
+    });
+
+    test('should return a failure when the string is a negative int', () async {
+      // arrange
+      const str = '-123';
+      // act
+      final result = inputConverter.stringToUnsignedInt(str);
+      // assert
+      expect(result, Left(InvalidInputFailure()));
+    });
   });
 
 }
