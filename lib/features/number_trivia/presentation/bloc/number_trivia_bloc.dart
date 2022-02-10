@@ -29,7 +29,9 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       
       inputEither.fold((failure) {
         emit(Error(message: INVALID_INPUT_FAILURE_MESSAGE));
-      }, (integer) => throw UnimplementedError());
+      }, (integer) {
+        getConcreteNumberTrivia(Params(number: integer));
+      });
     });
   }
 }
