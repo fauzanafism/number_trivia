@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:number_trivia/core/util/input_converter.dart';
 import 'package:number_trivia/features/number_trivia/domain/entities/number_trivia.dart';
 import 'package:number_trivia/features/number_trivia/presentation/bloc/number_trivia_bloc.dart';
 
@@ -45,5 +46,15 @@ void main() {
       // assert
       verify(mockInputConverter.stringToUnsignedInt(tNumberString));
     });
+
+    test('should emit Error when the input invalid', () async {
+      // arrange
+      when(mockInputConverter.stringToUnsignedInt(any)).thenReturn(const Left(InvalidInputFailure()));
+      // assert later
+      final expected = [
+        Empty(),
+        Error(message: INVAL)
+      ]
+    })
   });
 }
