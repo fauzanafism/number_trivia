@@ -1,3 +1,4 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -37,9 +38,12 @@ void main() {
     // ini entity
     const tNumberTrivia = NumberTrivia(text: 'test trivia', number: 1);
 
-    test('should call the InputConverter to validate and convert the string to an unsigned int', () async {
+    test(
+        'should call the InputConverter to validate and convert the string to an unsigned int',
+        () async {
       //  arrange
-      when(mockInputConverter.stringToUnsignedInt(any)).thenReturn(Right(tNumberParsed));
+      when(mockInputConverter.stringToUnsignedInt(any))
+          .thenReturn(Right(tNumberParsed));
       // act
       bloc.add(const GetTriviaForConcreteNumber(tNumberString));
       await untilCalled(mockInputConverter.stringToUnsignedInt(any));
@@ -47,14 +51,30 @@ void main() {
       verify(mockInputConverter.stringToUnsignedInt(tNumberString));
     });
 
+// pake tes biasa
     test('should emit Error when the input invalid', () async {
       // arrange
-      when(mockInputConverter.stringToUnsignedInt(any)).thenReturn(const Left(InvalidInputFailure()));
+      when(mockInputConverter.stringToUnsignedInt(any))
+          .thenReturn(Left(InvalidInputFailure()));
       // assert later
       final expected = [
-        Empty(),
-        Error(message: INVAL)
-      ]
-    })
+        Error(message: bloc.INVALID_INPUT_FAILURE_MESSAGE)
+      ];
+      expectLater(bloc.stream, emitsInOrder(expected));
+      // act
+      bloc.add(const GetTriviaForConcreteNumber(tNumberString));
+    });
+
+// coba pake bloc test
+    blocTest<NumberTriviaBloc, NumberTriviaState> ('should emit Error when the input invalid',
+        build: () {
+          when(mockInputConverter.stringToUnsignedInt(any))
+              .thenReturn(Left(InvalidInputFailure()));
+          return bloc;
+        },
+        act: (bloc) => bloc.add(const GetTriviaForConcreteNumber(tNumberString)),
+        expect: () =>
+            [Error(message: bloc.INVALID_INPUT_FAILURE_MESSAGE)],
+    );
   });
 }
