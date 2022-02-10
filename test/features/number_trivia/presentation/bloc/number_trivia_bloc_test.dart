@@ -57,24 +57,22 @@ void main() {
       when(mockInputConverter.stringToUnsignedInt(any))
           .thenReturn(Left(InvalidInputFailure()));
       // assert later
-      final expected = [
-        Error(message: bloc.INVALID_INPUT_FAILURE_MESSAGE)
-      ];
+      final expected = [Error(message: bloc.INVALID_INPUT_FAILURE_MESSAGE)];
       expectLater(bloc.stream, emitsInOrder(expected));
       // act
       bloc.add(const GetTriviaForConcreteNumber(tNumberString));
     });
 
 // coba pake bloc test
-    blocTest<NumberTriviaBloc, NumberTriviaState> ('should emit Error when the input invalid',
-        build: () {
-          when(mockInputConverter.stringToUnsignedInt(any))
-              .thenReturn(Left(InvalidInputFailure()));
-          return bloc;
-        },
-        act: (bloc) => bloc.add(const GetTriviaForConcreteNumber(tNumberString)),
-        expect: () =>
-            [Error(message: bloc.INVALID_INPUT_FAILURE_MESSAGE)],
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
+      'should emit Error when the input invalid',
+      build: () {
+        when(mockInputConverter.stringToUnsignedInt(any))
+            .thenReturn(Left(InvalidInputFailure()));
+        return bloc;
+      },
+      act: (bloc) => bloc.add(const GetTriviaForConcreteNumber(tNumberString)),
+      expect: () => [Error(message: bloc.INVALID_INPUT_FAILURE_MESSAGE)],
     );
   });
 }
