@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:number_trivia/core/util/input_converter.dart';
 import 'package:number_trivia/features/number_trivia/domain/entities/number_trivia.dart';
+import 'package:number_trivia/features/number_trivia/domain/usecases/get_concrete_number.dart';
 import 'package:number_trivia/features/number_trivia/presentation/bloc/number_trivia_bloc.dart';
 
 import '../../../../core/test_helpers.mocks.dart';
@@ -38,12 +39,15 @@ void main() {
     // ini entity
     const tNumberTrivia = NumberTrivia(text: 'test trivia', number: 1);
 
+    void setUpMockInputConverterSuccess() =>
+        when(mockInputConverter.stringToUnsignedInt(any))
+            .thenReturn(Right(tNumberParsed));
+
     test(
         'should call the InputConverter to validate and convert the string to an unsigned int',
         () async {
       //  arrange
-      when(mockInputConverter.stringToUnsignedInt(any))
-          .thenReturn(Right(tNumberParsed));
+      setUpMockInputConverterSuccess();
       // act
       bloc.add(const GetTriviaForConcreteNumber(tNumberString));
       await untilCalled(mockInputConverter.stringToUnsignedInt(any));
@@ -74,5 +78,17 @@ void main() {
       act: (bloc) => bloc.add(const GetTriviaForConcreteNumber(tNumberString)),
       expect: () => [Error(message: bloc.INVALID_INPUT_FAILURE_MESSAGE)],
     );
+
+    test('should get data from the concrete usecase', () async {
+      // arrange
+      setUpMockInputConverterSuccess();
+      when(mockGetConcreteNumberTrivia(any))
+          .thenAnswer((_) async => Right(tNumberTrivia));
+      // act
+      bloc.add(GetTriviaForConcreteNumber(tNumberString));
+      await untilCalled(mockGetConcreteNumberTrivia(any));
+      // assert
+      verify(mockGetConcreteNumberTrivia(Params(number: tNumberParsed)));
+    });
   });
 }
