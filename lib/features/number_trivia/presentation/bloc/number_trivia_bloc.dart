@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:number_trivia/core/util/input_converter.dart';
 import 'package:number_trivia/features/number_trivia/domain/entities/number_trivia.dart';
@@ -14,9 +13,9 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
   final GetRandomNumberTrivia getRandomNumberTrivia;
   final InputConverter inputConverter;
 
-  static const String SERVER_FAILURE_MESSAGE = 'Server Failure';
-  static const String CACHE_FAILURE_MESSAGE = 'Cache Failure';
-  static const String INVALID_INPUT_FAILURE_MESSAGE =
+  String SERVER_FAILURE_MESSAGE = 'Server Failure';
+  String CACHE_FAILURE_MESSAGE = 'Cache Failure';
+  String INVALID_INPUT_FAILURE_MESSAGE =
       'Invalid Input - The number must be a positive integer or zero.';
 
   NumberTriviaBloc(
@@ -24,8 +23,13 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       required this.getRandomNumberTrivia,
       required this.inputConverter})
       : super(Empty()) {
-    on<GetTriviaForConcreteNumber>((event, emit) {
-      inputConverter.stringToUnsignedInt(event.numberString);
+    on<GetTriviaForConcreteNumber>((event, emit) async {
+      final inputEither =
+          inputConverter.stringToUnsignedInt(event.numberString);
+      
+      inputEither.fold((failure) {
+        emit(Error(message: INVALID_INPUT_FAILURE_MESSAGE));
+      }, (integer) => throw UnimplementedError());
     });
   }
 }
