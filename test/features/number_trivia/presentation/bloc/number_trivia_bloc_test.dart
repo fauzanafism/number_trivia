@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:number_trivia/core/error/failures.dart';
 import 'package:number_trivia/core/util/input_converter.dart';
 import 'package:number_trivia/features/number_trivia/domain/entities/number_trivia.dart';
 import 'package:number_trivia/features/number_trivia/domain/usecases/get_concrete_number.dart';
@@ -99,6 +100,20 @@ void main() {
           .thenAnswer((_) async => const Right(tNumberTrivia));
       // assert later
       final expected = [Loading(), const Loaded(trivia: tNumberTrivia)];
+      expectLater(bloc.stream, emitsInOrder(expected));
+      // act
+      bloc.add(const GetTriviaForConcreteNumber(tNumberString));
+    });
+
+    test('should emit [Loading, Error] when getting data fails', () async {
+      // arrange
+      setUpMockInputConverterSuccess();
+      when(mockGetConcreteNumberTrivia(any)).thenAnswer((_) async => Left(ServerFailure()));
+      // assert later
+      final expected = [
+        Loading(),
+        Error(message: bloc.SERVER_FAILURE_MESSAGE)
+      ];
       expectLater(bloc.stream, emitsInOrder(expected));
       // act
       bloc.add(const GetTriviaForConcreteNumber(tNumberString));
