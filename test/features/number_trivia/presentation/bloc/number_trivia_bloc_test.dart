@@ -83,12 +83,25 @@ void main() {
       // arrange
       setUpMockInputConverterSuccess();
       when(mockGetConcreteNumberTrivia(any))
-          .thenAnswer((_) async => Right(tNumberTrivia));
+          .thenAnswer((_) async => const Right(tNumberTrivia));
       // act
-      bloc.add(GetTriviaForConcreteNumber(tNumberString));
+      bloc.add(const GetTriviaForConcreteNumber(tNumberString));
       await untilCalled(mockGetConcreteNumberTrivia(any));
       // assert
       verify(mockGetConcreteNumberTrivia(Params(number: tNumberParsed)));
+    });
+
+    test('should emit [Loading, Loaded] when data is gotten successfully',
+        () async {
+      // arrange
+      setUpMockInputConverterSuccess();
+      when(mockGetConcreteNumberTrivia(any))
+          .thenAnswer((_) async => const Right(tNumberTrivia));
+      // assert later
+      final expected = [Loading(), const Loaded(trivia: tNumberTrivia)];
+      expectLater(bloc.stream, emitsInOrder(expected));
+      // act
+      bloc.add(const GetTriviaForConcreteNumber(tNumberString));
     });
   });
 }
