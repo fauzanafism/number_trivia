@@ -21,7 +21,7 @@ Future<void> main() async {
   test('should get trivia from the repository', () async {
     when(mockNumberTriviaRepository.getConcreteNumberTrivia(tNumber))
         .thenAnswer((_) async => const Right(tNumberTrivia));
-    final result = await usecase(Params(number: tNumber));
+    final result = await usecase(const Params(number: tNumber));
 
     expect(result, equals(const Right(tNumberTrivia)));
 
