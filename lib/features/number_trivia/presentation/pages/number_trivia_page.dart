@@ -41,7 +41,8 @@ class NumberTriviaPage extends StatelessWidget {
                     return TriviaDisplay(numberTrivia: state.trivia,);
                   } else if (state is Error) {
                     return MessageDisplay(message: state.message);
-
+                  } else {
+                    return const MessageDisplay(message: 'Unknown Error');
                   }
                 },
               ),
