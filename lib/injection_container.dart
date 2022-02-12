@@ -25,6 +25,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetConcreteNumberTrivia(sl()));
   sl.registerLazySingleton(() => GetRandomNumberTrivia(sl()));
   // core
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton(() => InputConverter());
   // repository
   sl.registerLazySingleton<NumberTriviaRepository>(() =>
@@ -35,8 +36,6 @@ Future<void> init() async {
       () => NumberTriviaRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton<NumberTriviaLocalDataSource>(
       () => NumberTriviaLocalDataSourceImpl(sharedPreferences: sl()));
-  // core
-  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   // external
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
