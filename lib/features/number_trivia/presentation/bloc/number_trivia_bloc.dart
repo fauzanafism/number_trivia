@@ -30,7 +30,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       final inputEither =
           inputConverter.stringToUnsignedInt(event.numberString);
 
-      inputEither.fold((failure) {
+      await inputEither.fold((failure) async {
         emit(Error(message: INVALID_INPUT_FAILURE_MESSAGE));
       }, (integer) async {
         emit(Loading());
@@ -41,17 +41,16 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
     });
     on<GetTriviaForRandomNumber>((event, emit) async {
       emit(Loading());
-      final failureOrTrivia =
-            await getRandomNumberTrivia(NoParams());
-        _eitherLoadedOrErrorState(failureOrTrivia, emit); 
+      final failureOrTrivia = await getRandomNumberTrivia(NoParams());
+      _eitherLoadedOrErrorState(failureOrTrivia, emit);
     });
   }
 
-  void _eitherLoadedOrErrorState(Either<Failure, NumberTrivia> failureOrTrivia, Emitter<NumberTriviaState> emit) {
+  void _eitherLoadedOrErrorState(Either<Failure, NumberTrivia> failureOrTrivia,
+      Emitter<NumberTriviaState> emit) {
     failureOrTrivia.fold(
-        (failure) => emit(Error(
-            message: _mapFailureToMessage(failure))),
-        (trivia) => emit(Loaded(trivia: trivia))); 
+        (failure) => emit(Error(message: _mapFailureToMessage(failure))),
+        (trivia) => emit(Loaded(trivia: trivia)));
   }
 
   String _mapFailureToMessage(Failure failure) {
@@ -60,7 +59,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
         return SERVER_FAILURE_MESSAGE;
       case CacheFailure:
         return CACHE_FAILURE_MESSAGE;
-      default: 
+      default:
         return 'Unexpected Error';
     }
   }
