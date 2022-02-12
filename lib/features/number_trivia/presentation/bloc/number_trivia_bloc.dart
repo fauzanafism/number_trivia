@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:number_trivia/core/error/failures.dart';
 import 'package:number_trivia/core/usecases/usecase.dart';
@@ -35,19 +36,22 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
         emit(Loading());
         final failureOrTrivia =
             await getConcreteNumberTrivia(Params(number: integer));
-        failureOrTrivia.fold(
-            (failure) => emit(Error(message: _mapFailureToMessage(failure))),
-            (trivia) => emit(Loaded(trivia: trivia)));
-      });
-
-      on<GetTriviaForRandomNumber>((event, emit) async {
-        emit(Loading());
-        final failureOrTrivia = await getRandomNumberTrivia(NoParams());
-        failureOrTrivia.fold(
-            (failure) => emit(Error(message: _mapFailureToMessage(failure))),
-            (trivia) => emit(Loaded(trivia: trivia)));
+        _eitherLoadedOrErrorState(failureOrTrivia, emit);
       });
     });
+    on<GetTriviaForRandomNumber>((event, emit) async {
+      emit(Loading());
+      final failureOrTrivia =
+            await getRandomNumberTrivia(NoParams());
+        _eitherLoadedOrErrorState(failureOrTrivia, emit); 
+    });
+  }
+
+  void _eitherLoadedOrErrorState(Either<Failure, NumberTrivia> failureOrTrivia, Emitter<NumberTriviaState> emit) {
+    failureOrTrivia.fold(
+        (failure) => emit(Error(
+            message: _mapFailureToMessage(failure))),
+        (trivia) => emit(Loaded(trivia: trivia))); 
   }
 
   String _mapFailureToMessage(Failure failure) {
@@ -56,7 +60,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
         return SERVER_FAILURE_MESSAGE;
       case CacheFailure:
         return CACHE_FAILURE_MESSAGE;
-      default:
+      default: 
         return 'Unexpected Error';
     }
   }
