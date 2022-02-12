@@ -20,7 +20,7 @@ class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
   @override
   Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(
       int number) async {
-    if (networkInfo.isConnected == true) {
+    if (await networkInfo.isConnected == true) {
       try {
         final remoteTrivia =
             await remoteDataSource.getConcreteNumberTrivia(number);
