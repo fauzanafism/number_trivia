@@ -5,5 +5,6 @@ Simple number trivia app that implement Test-Driven Development principle (by Re
 ## Technical Spec
 
 - State management: flutter_bloc
-- Remote client: http
 - Local db: shared_preferences
+- Remote client: http
+- API: numbersapi.com
